@@ -1,0 +1,22 @@
+[gd_scene load_steps=5 format=3 uid="uid://ijd26q4xemrg"]
+
+[ext_resource type="Script" path="res://Scripts/generate_ground.gd" id="1_3xq47"]
+[ext_resource type="Script" path="res://Scripts/camera.gd" id="1_trvct"]
+[ext_resource type="Texture2D" uid="uid://qx1gp15xrg7j" path="res://Textures/heights.png" id="3_toqcb"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_hj4ln"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="Camera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0378, 1.81383)
+script = ExtResource("1_trvct")
+mouse_sens = 0.005
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
+mesh = SubResource("ArrayMesh_hj4ln")
+script = ExtResource("1_3xq47")
+mult = 100.0
+heights = ExtResource("3_toqcb")
+tex = ExtResource("3_toqcb")
