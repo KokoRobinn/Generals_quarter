@@ -102,6 +102,8 @@ func generate() -> void:
 	var material = StandardMaterial3D.new()
 	material.albedo_texture = tex
 	mesh.surface_set_material(0, material)
+	get_node("/root/Node3D/Ground/Shape").shape.set_faces(mesh.get_faces())
+	#ResourceSaver.save(mesh, "res://Objects/ground.tres", ResourceSaver.FLAG_COMPRESS)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:

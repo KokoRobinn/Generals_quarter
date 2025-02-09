@@ -1,10 +1,13 @@
-[gd_scene load_steps=5 format=3 uid="uid://ijd26q4xemrg"]
+[gd_scene load_steps=7 format=3 uid="uid://ijd26q4xemrg"]
 
 [ext_resource type="Script" path="res://Scripts/generate_ground.gd" id="1_3xq47"]
 [ext_resource type="Script" path="res://Scripts/camera.gd" id="1_trvct"]
 [ext_resource type="Texture2D" uid="uid://qx1gp15xrg7j" path="res://Textures/heights.png" id="3_toqcb"]
+[ext_resource type="Script" path="res://Scripts/trail.gd" id="4_3ta6j"]
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_hj4ln"]
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_ys222"]
 
 [node name="Node3D" type="Node3D"]
 
@@ -14,9 +17,18 @@ script = ExtResource("1_trvct")
 mouse_sens = 0.005
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+layers = 3
 mesh = SubResource("ArrayMesh_hj4ln")
 script = ExtResource("1_3xq47")
 seed = 65665.0
 map_size = Vector2i(2048, 2048)
 regenerate = true
 tex = ExtResource("3_toqcb")
+
+[node name="Trail" type="Node3D" parent="."]
+script = ExtResource("4_3ta6j")
+
+[node name="Ground" type="StaticBody3D" parent="."]
+
+[node name="Shape" type="CollisionShape3D" parent="Ground"]
+shape = SubResource("ConcavePolygonShape3D_ys222")
