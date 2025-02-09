@@ -14,9 +14,9 @@ script = ExtResource("1_trvct")
 mouse_sens = 0.005
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
 mesh = SubResource("ArrayMesh_hj4ln")
 script = ExtResource("1_3xq47")
-mult = 100.0
-heights = ExtResource("3_toqcb")
+seed = 65665.0
+map_size = Vector2i(2048, 2048)
+regenerate = true
 tex = ExtResource("3_toqcb")
