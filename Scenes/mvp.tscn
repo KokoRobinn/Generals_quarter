@@ -1,29 +1,28 @@
-[gd_scene load_steps=7 format=3 uid="uid://ijd26q4xemrg"]
+[gd_scene load_steps=10 format=3 uid="uid://ijd26q4xemrg"]
 
 [ext_resource type="Script" path="res://Scripts/generate_ground.gd" id="1_3xq47"]
 [ext_resource type="Script" path="res://Scripts/camera.gd" id="1_trvct"]
-[ext_resource type="Texture2D" uid="uid://qx1gp15xrg7j" path="res://Textures/heights.png" id="3_toqcb"]
 [ext_resource type="Script" path="res://Scripts/trail.gd" id="4_3ta6j"]
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_hj4ln"]
+[ext_resource type="Material" uid="uid://dglhlllkvpt1p" path="res://Materials/ground.tres" id="5_4miyp"]
+[ext_resource type="Script" path="res://Scripts/company.gd" id="5_plwtv"]
 
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_ys222"]
 
-[node name="Node3D" type="Node3D"]
+[sub_resource type="Curve3D" id="Curve3D_o8mmi"]
 
-[node name="Camera" type="Camera3D" parent="."]
+[sub_resource type="BoxMesh" id="BoxMesh_ky06t"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_hj4ln"]
+
+[node name="Root" type="Node3D"]
+
+[node name="Camera" type="Camera3D" parent="." node_paths=PackedStringArray("path", "fake_path", "ground_shape")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0378, 1.81383)
 script = ExtResource("1_trvct")
+path = NodePath("../Ground/Path3D")
+fake_path = NodePath("../Trail")
+ground_shape = NodePath("../Ground/Shape")
 mouse_sens = 0.005
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-layers = 3
-mesh = SubResource("ArrayMesh_hj4ln")
-script = ExtResource("1_3xq47")
-seed = 65665.0
-map_size = Vector2i(2048, 2048)
-regenerate = true
-tex = ExtResource("3_toqcb")
 
 [node name="Trail" type="Node3D" parent="."]
 script = ExtResource("4_3ta6j")
@@ -32,3 +31,29 @@ script = ExtResource("4_3ta6j")
 
 [node name="Shape" type="CollisionShape3D" parent="Ground"]
 shape = SubResource("ConcavePolygonShape3D_ys222")
+
+[node name="Path3D" type="Path3D" parent="Ground"]
+curve = SubResource("Curve3D_o8mmi")
+
+[node name="Company" type="PathFollow3D" parent="Ground/Path3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 40)
+script = ExtResource("5_plwtv")
+speed = 3
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground/Path3D/Company"]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 10, 0)
+mesh = SubResource("BoxMesh_ky06t")
+
+[node name="GroundMesh" type="MeshInstance3D" parent="Ground" node_paths=PackedStringArray("ground_shape")]
+layers = 3
+mesh = SubResource("ArrayMesh_hj4ln")
+skeleton = NodePath("../..")
+script = ExtResource("1_3xq47")
+ground_shape = NodePath("../Shape")
+seed = 65665.0
+map_size = Vector2i(2048, 2048)
+regenerate = true
+material = ExtResource("5_4miyp")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.201078, 0, -0.979575, 0, 1, 0, 0.979575, 0, -0.201078, 0, 0, 0)

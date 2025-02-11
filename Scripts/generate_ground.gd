@@ -8,13 +8,15 @@ class NoiseLayer:
 		zoom = z
 		amp = a
 
+@export var ground_shape : CollisionShape3D
 const MULTI_THREADING := true
 const UNIT_PER_QUAD := 10.0
-@export var seed := 1543515.74356 
-@export var noise_layers := [
-	NoiseLayer.new(1. / 7.0, 3.0),
-	NoiseLayer.new(1. / 2.0, 0.4),
-	NoiseLayer.new(1. / 1.0, 0.3)
+@export var seed := 1543515.74356
+# Noise layer is defined as (Inverse zoom factor, amplitude multiplier)
+@export var noise_layers : PackedVector2Array = [
+	Vector2(1. / 7.0, 3.0),
+	Vector2(1. / 2.0, 0.4),
+	Vector2(1. / 1.0, 0.3)
 ]
 @export var mult := 10.0
 @export var map_size := Vector2i(1024, 1024)
@@ -22,8 +24,7 @@ const UNIT_PER_QUAD := 10.0
 	set(value):
 		regen()
 var regenerating := false
-@export var heights := preload("res://Textures/heights.png")
-@export var tex := preload("res://.godot/imported/heights.png-7ec082f11699a676eeebe61cba7126e6.ctex")
+@export var material: StandardMaterial3D
 #@export var noise_layers := 3
 var num_layers := len(noise_layers)
 var noise_imgs: Array
@@ -56,14 +57,13 @@ func thread_generate(thread) -> void:
 			var local_seed = rng.randf_range(0.0, 1024.0)
 			var noise_sum = 0
 			for noise_height in range(num_layers).map(func(idx): 
-					var vec = Vector2(local_seed + x, local_seed + y) * noise_layers[idx].zoom
+					var vec = Vector2(local_seed + x, local_seed + y) * noise_layers[idx].x
 					rng.set_seed(seed)
-					return noise.noise.get_noise_2dv(vec) * noise_layers[idx].amp):
+					return noise.noise.get_noise_2dv(vec) * noise_layers[idx].y):
 				noise_sum += noise_height * mult
 			local_seed = seed
 			var vert = Vector3(float(x) * UNIT_PER_QUAD, noise_sum * mult, float(y) * UNIT_PER_QUAD)
 			verts[y * w + x] = vert
-			normals[y * w + x] = vert.normalized()
 			uvs[y * w + x] = Vector2(float(x) / (w - 1), float(y) / (h - 1))
 	
 func generate() -> void:
@@ -81,6 +81,7 @@ func generate() -> void:
 	print("Creating threads\n")
 	var task_id = WorkerThreadPool.add_group_task(thread_generate, num_threads)
 	WorkerThreadPool.wait_for_group_task_completion(task_id)
+
 	for y in range(1, h):
 		for x in range(1, w):
 			indices.append(w * (y - 1) + x - 1)  # 1  __  2
@@ -90,7 +91,22 @@ func generate() -> void:
 			indices.append(w * (y - 1) + x)      #     /| 1
 			indices.append(w * y + x)            #    / |
 			indices.append(w * y + x - 1)        # 3 /__| 2
-					
+			
+			var cur = verts[y * w + x]
+			var tl_cross = Vector3()
+			if x > 0 and y > 0: 
+				tl_cross = (verts[(y - 1) * w + x] - cur).cross(verts[y * w + x - 1] - cur).normalized()
+			var tr_cross = Vector3()
+			if x < w - 1 and y > 0:
+				tr_cross = (verts[y * w + x + 1] - cur).cross(verts[(y - 1) * w + x] - cur).normalized()
+			var bl_cross = Vector3()
+			if x < w - 1 and y < h - 1:
+				bl_cross = (verts[(y + 1) * w + x] - cur).cross(verts[y * w + x + 1] - cur).normalized()
+			var br_cross = Vector3()
+			if y < h - 1 and x > 0:
+				br_cross = (verts[y * w + x - 1] - cur).cross(verts[(y + 1) * w + x] - cur).normalized()
+			normals[y * w + x] = (tl_cross + tr_cross + bl_cross + br_cross).normalized()
+
 	surface_array[Mesh.ARRAY_VERTEX] = verts
 	surface_array[Mesh.ARRAY_TEX_UV] = uvs
 	surface_array[Mesh.ARRAY_NORMAL] = normals
@@ -99,10 +115,8 @@ func generate() -> void:
 	mesh = ArrayMesh.new()
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surface_array)
 	
-	var material = StandardMaterial3D.new()
-	material.albedo_texture = tex
 	mesh.surface_set_material(0, material)
-	get_node("/root/Node3D/Ground/Shape").shape.set_faces(mesh.get_faces())
+	ground_shape.shape.set_faces(mesh.get_faces())
 	#ResourceSaver.save(mesh, "res://Objects/ground.tres", ResourceSaver.FLAG_COMPRESS)
 
 # Called when the node enters the scene tree for the first time.

@@ -1,12 +1,15 @@
 extends Camera3D
 
+@export var path : Path3D
+@export var fake_path : Node3D # = $/root/Root/Trail #$/root/Root/Ground/Path
+@export var ground_shape : CollisionShape3D# = $/root/Root/Ground/Shape
 @export var speed := 1.0
 @export var mouse_sens := 0.01
 var rot_x = 0
 var rot_y = 0
 var last_sample = 0
 const RAY_LENGTH = 3000
-var ray_collision: Vector3
+var ray_collision : Vector3
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -28,6 +31,7 @@ func _physics_process(delta: float) -> void:
 
 	var result = space_state.intersect_ray(query)
 	if result:
+		#print(result.collider.name)
 		ray_collision = result.position
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -66,7 +70,8 @@ func _input(event):
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and last_sample + 200 < Time.get_ticks_msec():
 		last_sample = Time.get_ticks_msec()
 		print("Found collision at %v from ray caster at %v" % [ray_collision, transform.origin])
-		get_node("/root/Node3D/Trail").add_pos(ray_collision)
+		fake_path.add_pos(ray_collision)
+		path.curve.add_point(ray_collision)
 	if event is InputEventKey and Input.is_key_pressed(KEY_V):
 		var vp = get_viewport()
 		vp.debug_draw = (vp.debug_draw + 1) % 5
