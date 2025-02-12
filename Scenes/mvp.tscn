@@ -17,11 +17,14 @@
 [node name="Root" type="Node3D"]
 
 [node name="Camera" type="Camera3D" parent="." node_paths=PackedStringArray("path", "fake_path", "ground_shape")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0378, 1.81383)
+transform = Transform3D(1, 0, 0, 0, 0.422618, 0.906308, 0, -0.906308, 0.422618, 100, 100, 100)
 script = ExtResource("1_trvct")
 path = NodePath("../Ground/Path3D")
 fake_path = NodePath("../Trail")
 ground_shape = NodePath("../Ground/Shape")
+acc = 4.0
+max_speed = 15.0
+dec = 0.9
 mouse_sens = 0.005
 
 [node name="Trail" type="Node3D" parent="."]
