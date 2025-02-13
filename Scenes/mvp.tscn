@@ -1,10 +1,13 @@
-[gd_scene load_steps=10 format=3 uid="uid://ijd26q4xemrg"]
+[gd_scene load_steps=13 format=3 uid="uid://ijd26q4xemrg"]
 
 [ext_resource type="Script" path="res://Scripts/generate_ground.gd" id="1_3xq47"]
 [ext_resource type="Script" path="res://Scripts/camera.gd" id="1_trvct"]
+[ext_resource type="Script" path="res://Scripts/gamestate.gd" id="1_uig55"]
 [ext_resource type="Script" path="res://Scripts/trail.gd" id="4_3ta6j"]
 [ext_resource type="Material" uid="uid://dglhlllkvpt1p" path="res://Materials/ground.tres" id="5_4miyp"]
 [ext_resource type="Script" path="res://Scripts/company.gd" id="5_plwtv"]
+[ext_resource type="ButtonGroup" uid="uid://bsa1c5wirmg0n" path="res://Objects/action_group.tres" id="7_2fj2p"]
+[ext_resource type="Script" path="res://Scripts/action_group.gd" id="7_i4kgb"]
 
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_ys222"]
 
@@ -14,11 +17,13 @@
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_hj4ln"]
 
-[node name="Root" type="Node3D"]
+[node name="State" type="Node3D"]
+script = ExtResource("1_uig55")
 
-[node name="Camera" type="Camera3D" parent="." node_paths=PackedStringArray("path", "fake_path", "ground_shape")]
+[node name="Camera" type="Camera3D" parent="." node_paths=PackedStringArray("gamestate", "path", "fake_path", "ground_shape")]
 transform = Transform3D(1, 0, 0, 0, 0.422618, 0.906308, 0, -0.906308, 0.422618, 100, 100, 100)
 script = ExtResource("1_trvct")
+gamestate = NodePath("..")
 path = NodePath("../Ground/Path3D")
 fake_path = NodePath("../Trail")
 ground_shape = NodePath("../Ground/Shape")
@@ -60,3 +65,45 @@ material = ExtResource("5_4miyp")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.201078, 0, -0.979575, 0, 1, 0, 0.979575, 0, -0.201078, 0, 0, 0)
+
+[node name="Control" type="Control" parent="." node_paths=PackedStringArray("gamestate")]
+layout_mode = 3
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -117.0
+offset_bottom = 149.0
+grow_horizontal = 0
+mouse_filter = 1
+script = ExtResource("7_i4kgb")
+group = ExtResource("7_2fj2p")
+gamestate = NodePath("..")
+
+[node name="InspectButton" type="Button" parent="Control"]
+layout_mode = 0
+offset_left = 23.0
+offset_top = 5.0
+offset_right = 112.0
+offset_bottom = 38.0
+toggle_mode = true
+button_pressed = true
+button_group = ExtResource("7_2fj2p")
+text = "Inspect"
+
+[node name="DeployButton" type="Button" parent="Control"]
+offset_left = 23.0
+offset_top = 43.0
+offset_right = 112.0
+offset_bottom = 76.0
+toggle_mode = true
+button_group = ExtResource("7_2fj2p")
+text = "Deploy"
+
+[node name="PathButton" type="Button" parent="Control"]
+offset_left = 23.0
+offset_top = 81.0
+offset_right = 112.0
+offset_bottom = 116.0
+toggle_mode = true
+button_group = ExtResource("7_2fj2p")
+text = "Draw Path"

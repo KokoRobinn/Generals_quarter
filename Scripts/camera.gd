@@ -1,5 +1,6 @@
 extends Camera3D
 
+@export var gamestate: Node3D
 @export var path : Path3D
 @export var fake_path : Node3D # = $/root/Root/Trail #$/root/Root/Ground/Path
 @export var ground_shape : CollisionShape3D# = $/root/Root/Ground/Shape
@@ -33,7 +34,7 @@ func _physics_process(delta: float) -> void:
 	query.collide_with_areas = true
 
 	var result = space_state.intersect_ray(query)
-	if result:
+	if result and result.collider.name == "Ground" and gamestate.is_action(gamestate.actions.pathing):
 		#print(result.collider.name)
 		ray_collision = result.position
 
@@ -56,7 +57,7 @@ func _physics_process(delta: float) -> void:
 	if Input.is_key_pressed(KEY_ESCAPE):
 		get_tree().quit()
 
-func _input(event):
+func _unhandled_input(event):
 #	if event is InputEventMouseMotion:
 		# modify accumulated mouse rotation
 #		rot_x += event.relative.x * mouse_sens
@@ -68,7 +69,7 @@ func _input(event):
 		path.curve.clear_points()
 	if Input.is_key_pressed(KEY_0):
 		transform = Transform3D.IDENTITY
-	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and last_sample + 200 < Time.get_ticks_msec():
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and last_sample + 200 < Time.get_ticks_msec() and gamestate.is_action(gamestate.actions.pathing):
 		last_sample = Time.get_ticks_msec()
 		#print("Found collision at %v from ray caster at %v" % [ray_collision, transform.origin])
 		fake_path.add_pos(ray_collision)
