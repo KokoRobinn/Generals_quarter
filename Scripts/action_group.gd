@@ -9,4 +9,4 @@ func _ready() -> void:
 		b.connect("pressed", button_pressed)
 		
 func button_pressed() -> void:
-	gamestate.current_action = group.get_buttons().find(group.get_pressed_button()) - 1
+	gamestate.current_action = group.get_buttons().find(group.get_pressed_button())

@@ -1,13 +1,13 @@
 [gd_scene load_steps=13 format=3 uid="uid://ijd26q4xemrg"]
 
-[ext_resource type="Script" path="res://Scripts/generate_ground.gd" id="1_3xq47"]
-[ext_resource type="Script" path="res://Scripts/camera.gd" id="1_trvct"]
-[ext_resource type="Script" path="res://Scripts/gamestate.gd" id="1_uig55"]
-[ext_resource type="Script" path="res://Scripts/trail.gd" id="4_3ta6j"]
+[ext_resource type="Script" uid="uid://b42ffeh4g5i0n" path="res://Scripts/generate_ground.gd" id="1_3xq47"]
+[ext_resource type="Script" uid="uid://pwp0liefshf0" path="res://Scripts/camera.gd" id="1_trvct"]
+[ext_resource type="Script" uid="uid://epndpngdil28" path="res://Scripts/gamestate.gd" id="1_uig55"]
+[ext_resource type="Script" uid="uid://ckkr2xqkkucwe" path="res://Scripts/trail.gd" id="4_3ta6j"]
 [ext_resource type="Material" uid="uid://dglhlllkvpt1p" path="res://Materials/ground.tres" id="5_4miyp"]
-[ext_resource type="Script" path="res://Scripts/company.gd" id="5_plwtv"]
+[ext_resource type="Script" uid="uid://b7yfgm3y6txee" path="res://Scripts/company.gd" id="5_plwtv"]
 [ext_resource type="ButtonGroup" uid="uid://bsa1c5wirmg0n" path="res://Objects/action_group.tres" id="7_2fj2p"]
-[ext_resource type="Script" path="res://Scripts/action_group.gd" id="7_i4kgb"]
+[ext_resource type="Script" uid="uid://b053rdn1jqvm0" path="res://Scripts/action_group.gd" id="7_i4kgb"]
 
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_ys222"]
 
@@ -17,8 +17,9 @@
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_hj4ln"]
 
-[node name="State" type="Node3D"]
+[node name="State" type="Node3D" node_paths=PackedStringArray("troop_label")]
 script = ExtResource("1_uig55")
+troop_label = NodePath("Control/TroopsLabel")
 
 [node name="Camera" type="Camera3D" parent="." node_paths=PackedStringArray("gamestate", "path", "fake_path", "ground_shape")]
 transform = Transform3D(1, 0, 0, 0, 0.422618, 0.906308, 0, -0.906308, 0.422618, 100, 100, 100)
@@ -26,7 +27,7 @@ script = ExtResource("1_trvct")
 gamestate = NodePath("..")
 path = NodePath("../Ground/Path3D")
 fake_path = NodePath("../Trail")
-ground_shape = NodePath("../Ground/Shape")
+ground_shape = NodePath("../Ground/CollisionShape")
 acc = 4.0
 max_speed = 15.0
 dec = 0.9
@@ -37,7 +38,7 @@ script = ExtResource("4_3ta6j")
 
 [node name="Ground" type="StaticBody3D" parent="."]
 
-[node name="Shape" type="CollisionShape3D" parent="Ground"]
+[node name="CollisionShape" type="CollisionShape3D" parent="Ground"]
 shape = SubResource("ConcavePolygonShape3D_ys222")
 
 [node name="Path3D" type="Path3D" parent="Ground"]
@@ -45,6 +46,8 @@ curve = SubResource("Curve3D_o8mmi")
 
 [node name="Company" type="PathFollow3D" parent="Ground/Path3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 40)
+rotation_mode = 1
+use_model_front = true
 script = ExtResource("5_plwtv")
 speed = 3
 
@@ -57,14 +60,14 @@ layers = 3
 mesh = SubResource("ArrayMesh_hj4ln")
 skeleton = NodePath("../..")
 script = ExtResource("1_3xq47")
-ground_shape = NodePath("../Shape")
-seed = 65665.0
+ground_shape = NodePath("../CollisionShape")
+seed = 65679.2
 map_size = Vector2i(2048, 2048)
 regenerate = true
 material = ExtResource("5_4miyp")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.201078, 0, -0.979575, 0, 1, 0, 0.979575, 0, -0.201078, 0, 0, 0)
+transform = Transform3D(0.995055, 0.046168, 0.087937, 0, -0.885394, 0.464842, 0.0993197, -0.462544, -0.881016, 0, 0, 0)
 
 [node name="Control" type="Control" parent="." node_paths=PackedStringArray("gamestate")]
 layout_mode = 3
@@ -91,6 +94,7 @@ button_group = ExtResource("7_2fj2p")
 text = "Inspect"
 
 [node name="DeployButton" type="Button" parent="Control"]
+layout_mode = 0
 offset_left = 23.0
 offset_top = 43.0
 offset_right = 112.0
@@ -100,6 +104,7 @@ button_group = ExtResource("7_2fj2p")
 text = "Deploy"
 
 [node name="PathButton" type="Button" parent="Control"]
+layout_mode = 0
 offset_left = 23.0
 offset_top = 81.0
 offset_right = 112.0
@@ -107,3 +112,14 @@ offset_bottom = 116.0
 toggle_mode = true
 button_group = ExtResource("7_2fj2p")
 text = "Draw Path"
+
+[node name="TroopsLabel" type="Label" parent="Control"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -8.835
+anchor_right = -8.835
+offset_left = 6.69495
+offset_top = 6.0
+offset_right = 118.695
+offset_bottom = 30.0
+text = "Troops: 10000"

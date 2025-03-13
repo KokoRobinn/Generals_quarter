@@ -23,6 +23,7 @@ const UNIT_PER_QUAD := 10.0
 @export var regenerate := false :
 	set(value):
 		regen()
+		regenerate = false
 var regenerating := false
 @export var material: StandardMaterial3D
 #@export var noise_layers := 3

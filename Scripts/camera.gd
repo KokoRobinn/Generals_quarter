@@ -11,9 +11,18 @@ extends Camera3D
 @export var mouse_sens := 0.01
 var rot_x = 0
 var rot_y = 0
-var last_sample = 0
 const RAY_LENGTH = 3000
 var ray_collision : Vector3
+# Drawing path
+@export var path_draw_delay_ms := 100
+@export var path_draw_min_dist := 5
+var last_sample = 0
+var last_ray_collision := Vector3(0, 0, 0)
+# Deploying
+const UNIT_WIDTH := 10
+var drawing_company := false
+var first_point : Vector3
+var second_point : Vector3
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -34,8 +43,9 @@ func _physics_process(delta: float) -> void:
 	query.collide_with_areas = true
 
 	var result = space_state.intersect_ray(query)
-	if result and result.collider.name == "Ground" and gamestate.is_action(gamestate.actions.pathing):
+	if result and result.collider.name == "Ground" and not gamestate.is_action(gamestate.actions.inspecting):
 		#print(result.collider.name)
+		last_ray_collision = ray_collision
 		ray_collision = result.position
 
 	speed *= dec
@@ -69,11 +79,30 @@ func _unhandled_input(event):
 		path.curve.clear_points()
 	if Input.is_key_pressed(KEY_0):
 		transform = Transform3D.IDENTITY
-	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and last_sample + 200 < Time.get_ticks_msec() and gamestate.is_action(gamestate.actions.pathing):
-		last_sample = Time.get_ticks_msec()
-		#print("Found collision at %v from ray caster at %v" % [ray_collision, transform.origin])
-		fake_path.add_pos(ray_collision)
-		path.curve.add_point(ray_collision)
 	if event is InputEventKey and Input.is_key_pressed(KEY_V):
 		var vp = get_viewport()
 		vp.debug_draw = (vp.debug_draw + 1) % 5
+		
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		# Draw path
+		if gamestate.is_action(gamestate.actions.pathing) \
+		and (last_sample + path_draw_delay_ms < Time.get_ticks_msec() \
+		  or (ray_collision - last_ray_collision).length() > path_draw_min_dist):
+			last_sample = Time.get_ticks_msec()
+			#print("Found collision at %v from ray caster at %v" % [ray_collision, transform.origin])
+			fake_path.add_pos(ray_collision)
+			path.curve.add_point(ray_collision)
+		# Deploy company
+		elif gamestate.is_action(gamestate.actions.deploying):
+			if drawing_company:
+				second_point = ray_collision
+				var dx = floor(abs(first_point.x - second_point.x) / UNIT_WIDTH)
+				var dz = floor(abs(first_point.z - second_point.z) / UNIT_WIDTH)
+				gamestate.troops = gamestate.troops - dx * dz
+				print(gamestate.troops)
+			elif not drawing_company:
+				first_point = ray_collision
+				drawing_company = true
+	# No mouse click
+	else:
+		drawing_company = false
