@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://pwp0liefshf0" path="res://Scripts/camera.gd" id="1_trvct"]
 [ext_resource type="Script" uid="uid://epndpngdil28" path="res://Scripts/gamestate.gd" id="1_uig55"]
 [ext_resource type="Script" uid="uid://ckkr2xqkkucwe" path="res://Scripts/trail.gd" id="4_3ta6j"]
-[ext_resource type="Material" uid="uid://dglhlllkvpt1p" path="res://Materials/ground.tres" id="5_4miyp"]
+[ext_resource type="Material" path="res://Objects/ground.tres" id="5_4miyp"]
 [ext_resource type="Script" uid="uid://b7yfgm3y6txee" path="res://Scripts/company.gd" id="5_plwtv"]
 [ext_resource type="ButtonGroup" uid="uid://bsa1c5wirmg0n" path="res://Objects/action_group.tres" id="7_2fj2p"]
 [ext_resource type="Script" uid="uid://b053rdn1jqvm0" path="res://Scripts/action_group.gd" id="7_i4kgb"]
