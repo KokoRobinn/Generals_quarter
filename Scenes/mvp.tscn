@@ -4,8 +4,8 @@
 [ext_resource type="Script" uid="uid://pwp0liefshf0" path="res://Scripts/camera.gd" id="1_trvct"]
 [ext_resource type="Script" uid="uid://epndpngdil28" path="res://Scripts/gamestate.gd" id="1_uig55"]
 [ext_resource type="Script" uid="uid://ckkr2xqkkucwe" path="res://Scripts/trail.gd" id="4_3ta6j"]
-[ext_resource type="Material" path="res://Objects/ground.tres" id="5_4miyp"]
 [ext_resource type="Script" uid="uid://b7yfgm3y6txee" path="res://Scripts/company.gd" id="5_plwtv"]
+[ext_resource type="Material" uid="uid://c7r8wv8e0sxrn" path="res://Textures/ground.tres" id="6_l7bw6"]
 [ext_resource type="ButtonGroup" uid="uid://bsa1c5wirmg0n" path="res://Objects/action_group.tres" id="7_2fj2p"]
 [ext_resource type="Script" uid="uid://b053rdn1jqvm0" path="res://Scripts/action_group.gd" id="7_i4kgb"]
 
@@ -64,7 +64,7 @@ ground_shape = NodePath("../CollisionShape")
 seed = 65679.2
 map_size = Vector2i(2048, 2048)
 regenerate = true
-material = ExtResource("5_4miyp")
+material = ExtResource("6_l7bw6")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.995055, 0.046168, 0.087937, 0, -0.885394, 0.464842, 0.0993197, -0.462544, -0.881016, 0, 0, 0)
