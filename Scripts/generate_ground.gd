@@ -83,15 +83,16 @@ func generate() -> void:
 	var task_id = WorkerThreadPool.add_group_task(thread_generate, num_threads)
 	WorkerThreadPool.wait_for_group_task_completion(task_id)
 
-	for y in range(1, h):
-		for x in range(1, w):
-			indices.append(w * (y - 1) + x - 1)  # 1  __  2
-			indices.append(w * (y - 1) + x)      #   | /
-			indices.append(w * y + x - 1)        # 3 |/
-				
-			indices.append(w * (y - 1) + x)      #     /| 1
-			indices.append(w * y + x)            #    / |
-			indices.append(w * y + x - 1)        # 3 /__| 2
+	for y in range(0, h):
+		for x in range(0, w):
+			if x < w - 1 and y < h - 1: # Adds too many indices without this
+				indices.append(w * y + x)             # 1  __  2
+				indices.append(w * y + x + 1)         #   | /
+				indices.append(w * (y + 1) + x)       # 3 |/
+					
+				indices.append(w * y + x + 1)         #     /| 1
+				indices.append(w * (y + 1) + x + 1)   #    / |
+				indices.append(w * (y + 1) + x)       # 3 /__| 2
 			
 			var cur = verts[y * w + x]
 			var tl_cross = Vector3()
